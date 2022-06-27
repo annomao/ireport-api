@@ -5,8 +5,7 @@ source "https://rubygems.org"
 gem "sinatra", "~> 2.1"
 
 # A fast and simple web server
-# https://github.com/macournoyer/thin
-gem "thin", "~> 1.8"
+gem "puma"
 
 # Rack middleware. Used specifically for parsing the request body into params.
 # https://github.com/rack/rack-contrib
@@ -28,8 +27,8 @@ gem "sinatra-activerecord", "~> 2.0"
 # https://github.com/ruby/rake
 gem "rake", "~> 13.0"
 
-# Provides functionality to interact with a SQLite3 database
-gem "sqlite3", "~> 1.4"
+# Provides functionality to interact with a postgres database
+gem "pg"
 
 # Require all files in a folder
 gem "require_all", "~> 3.0"
@@ -41,6 +40,10 @@ group :development do
   # Automatically reload when there are changes
   # https://github.com/alexch/rerun
   gem "rerun"
+
+  # A fast and simple web server
+  # https://github.com/macournoyer/thin
+  gem "thin", "~> 1.8"
 end
 
 # These gems will only be used when we are running tests
