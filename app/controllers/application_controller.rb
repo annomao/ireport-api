@@ -35,7 +35,7 @@ class ApplicationController < Sinatra::Base
   patch "/users/:id" do
     user = User.find(params[:id])
     user.update(
-      name:params[:name]
+      name:params[:name],
       username:params[:username]
     )
     user.to_json
@@ -67,7 +67,7 @@ class ApplicationController < Sinatra::Base
   patch "/reports/:id" do
     report = Report.find(params[:id])
     report.update(
-      location:params[:location]
+      location:params[:location],
       comment:params[:comment]
     )
     report.to_json
@@ -83,6 +83,7 @@ class ApplicationController < Sinatra::Base
     type = Type.create(
       name:params[:name]
     )
+    type.to_json
   end
 
 end
