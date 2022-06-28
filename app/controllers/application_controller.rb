@@ -79,11 +79,10 @@ class ApplicationController < Sinatra::Base
     report.to_json
   end
 
-  post "/types" do
-    type = Type.create(
-      name:params[:name]
-    )
-    type.to_json
+  #type routes
+  get "/types" do
+    types = Type.all
+    types.to_json
   end
 
 end
