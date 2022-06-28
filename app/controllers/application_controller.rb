@@ -1,14 +1,55 @@
 class ApplicationController < Sinatra::Base
   set :default_content_type, 'application/json'
+
+  enable :sessions
   
-  # Add your routes here
-  get "/" do
-    "Welcome to iReport!." 
+  # User routes
+  post "/signup" do
+    user = User.find_by(email:params[:email])
+
+    if user == nil
+      new_user = User.create(
+        name:params[:name],
+        username:params[:username],
+        email:params[:email],
+        password:params[:password]
+      )
+      new_user.to_json
+    else
+      status 409
+      { errors: "User already exist" }.to_json
+    end
+  end
+
+  post "/login" do
+    user = User.find_by(email:params[:email])
+  
+    if user && user.authenticate(params[:password])
+      session[:user_id] = user.id
+    else
+      status 403
+      { errors: "User does not exist" }.to_json
+    end
+  end
+
+  patch "/users/:id" do
+    user = User.find(params[:id])
+    user.update(
+      name:params[:name]
+      username:params[:username]
+    )
+    user.to_json
   end
 
   #reports routes
-  get "/reports/:id" do
-    reports = Report.all.where(["user_id= ?", params[:id]]).order(:updated_at)
+
+  get "/reports" do
+    reports = Report.all.limit(10)
+    reports.to_json
+  end
+
+  get "/user/reports" do
+    reports = Report.all.where(["user_id= ?", session[:user_id]]).order(:updated_at)
     reports.to_json
   end
 
@@ -17,23 +58,16 @@ class ApplicationController < Sinatra::Base
       title:params[:title],
       location:params[:location],
       comment:params[:comment],
-      user_id:params[:user_id],
+      user_id:session[:user_id],
       type_id:params[:type_id]
     )
     report.to_json
   end
 
-  patch "/reports/location/:id" do
+  patch "/reports/:id" do
     report = Report.find(params[:id])
     report.update(
-      location:params[:comment]
-    )
-    report.to_json
-  end
-
-  patch "/reports/comment/:id" do
-    report = Report.find(params[:id])
-    report.update(
+      location:params[:location]
       comment:params[:comment]
     )
     report.to_json
@@ -43,6 +77,12 @@ class ApplicationController < Sinatra::Base
     report = Report.find(params[:id])
     report.destroy
     report.to_json
+  end
+
+  post "/types" do
+    type = Type.create(
+      name:params[:name]
+    )
   end
 
 end
