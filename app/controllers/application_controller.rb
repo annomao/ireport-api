@@ -26,6 +26,7 @@ class ApplicationController < Sinatra::Base
   
     if user && user.authenticate(params[:password])
       session[:user_id] = user.id
+      user.to_json
     else
       status 403
       { errors: "User does not exist" }.to_json
