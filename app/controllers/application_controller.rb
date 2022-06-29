@@ -7,7 +7,7 @@ class ApplicationController < Sinatra::Base
   end
 
   #check if session Id is stored
-  def helpers
+  helpers do
     def logged_in? 
       !!session[:user_id]
     end
