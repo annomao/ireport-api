@@ -52,6 +52,10 @@ class ApplicationController < Sinatra::Base
     user.to_json
   end
 
+  get '/logout' do
+    session.clear
+  end
+
   #reports routes
 
   get "/reports" do
