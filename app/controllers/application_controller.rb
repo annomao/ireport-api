@@ -1,7 +1,17 @@
 class ApplicationController < Sinatra::Base
   set :default_content_type, 'application/json'
 
-  enable :sessions
+  configure do
+    enable :sessions
+    set :session_secret, "session_encryption"
+  end
+
+  #check if session Id is stored
+  def helpers
+    def logged_in? 
+      !!session[:user_id]
+    end
+  end
   
   # User routes
   post "/signup" do
@@ -50,11 +60,17 @@ class ApplicationController < Sinatra::Base
   end
 
   get "/user/reports" do
-    reports = Report.all.where(["user_id= ?", session[:user_id]]).order(:updated_at)
-    reports.to_json
+    if logged_in?
+      reports = Report.all.where(["user_id= ?", session[:user_id]]).order(:updated_at)
+      reports.to_json
+    else
+      { errors: "Kindly Login or Create an account" }.to_json
+    end
+    
   end
 
   post "/reports" do
+    if logged_in?
       report = Report.create(
       title:params[:title],
       location:params[:location],
@@ -63,15 +79,22 @@ class ApplicationController < Sinatra::Base
       type_id:params[:type_id]
     )
     report.to_json
+    else
+      { errors: "Kindly Login or Create an account" }.to_json
+    end
   end
 
   patch "/reports/:id" do
-    report = Report.find(params[:id])
-    report.update(
-      location:params[:location],
-      comment:params[:comment]
-    )
-    report.to_json
+    if logged_in?
+      report = Report.find(params[:id])
+      report.update(
+        location:params[:location],
+        comment:params[:comment]
+      )
+      report.to_json
+    else
+      { errors: "Kindly Login or Create an account" }.to_json
+    end
   end
 
   delete "/reports/:id" do
