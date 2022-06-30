@@ -55,7 +55,17 @@ class ApplicationController < Sinatra::Base
 
   get "/reports" do
     reports = Report.all.limit(10)
-    reports.to_json
+    updated_reports = reports.map do |report|
+      {
+        id: report.id,
+        title: report.title,
+        intervention: report.type.name,
+        location: report.location,
+        comment:report.comment,
+        status: report.status
+      }
+    end
+    updated_reports.to_json
   end
 
   get "/user/reports/:id" do
@@ -92,13 +102,31 @@ class ApplicationController < Sinatra::Base
         location:params[:location],
         comment:params[:comment]
       )
-    report.to_json
+      updated_report = {
+          id: report.id,
+          title: report.title,
+          intervention: report.type.name,
+          location: report.location,
+          comment:report.comment,
+          status: report.status
+        }
+      updated_report.to_json
   end
 
-  delete "/reports/:id" do
+  patch "/reports/status/:id" do
     report = Report.find(params[:id])
-    report.destroy
-    report.to_json
+    report.update(
+      status:params[:status]
+    )
+    updated_report = {
+        id: report.id,
+        title: report.title,
+        intervention: report.type.name,
+        location: report.location,
+        comment:report.comment,
+        status: report.status
+      }
+    updated_report.to_json
   end
 
   #type routes
