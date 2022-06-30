@@ -41,8 +41,14 @@ class ApplicationController < Sinatra::Base
     user.update(
       name:params[:name],
       username:params[:username]
-    )
-    user.to_json
+      )
+    user_data = {
+      id: user.id,
+      name: user.name,
+      username: user.username,
+      email: user.email
+    }
+  user_data.to_json
   end
 
   #reports routes
