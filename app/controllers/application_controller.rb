@@ -52,8 +52,8 @@ class ApplicationController < Sinatra::Base
     reports.to_json
   end
 
-  get "/user/reports" do
-      reports = Report.all.where(["user_id= ?", session[:user_id]]).order(:updated_at)
+  get "/user/reports/:id" do
+      reports = Report.all.where(["user_id= ?", params[:id]]).order(:updated_at)
       reports.to_json
     
   end
