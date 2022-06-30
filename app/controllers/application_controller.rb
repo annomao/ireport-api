@@ -1,17 +1,5 @@
 class ApplicationController < Sinatra::Base
   set :default_content_type, 'application/json'
-
-  configure do
-    enable :sessions
-    set :session_secret, "session_encryption"
-  end
-
-  #check if session Id is stored
-  helpers do
-    def logged_in? 
-      !!session[:user_id]
-    end
-  end
   
   # User routes
   post "/signup" do
@@ -35,7 +23,6 @@ class ApplicationController < Sinatra::Base
     user = User.find_by(email:params[:email])
   
     if user && user.authenticate(params[:password])
-      session[:user_id] = user.id
       user.to_json
     else
       status 403
@@ -52,10 +39,6 @@ class ApplicationController < Sinatra::Base
     user.to_json
   end
 
-  get '/logout' do
-    session.clear
-  end
-
   #reports routes
 
   get "/reports" do
@@ -64,41 +47,29 @@ class ApplicationController < Sinatra::Base
   end
 
   get "/user/reports" do
-    if logged_in?
       reports = Report.all.where(["user_id= ?", session[:user_id]]).order(:updated_at)
       reports.to_json
-    else
-      { errors: "Kindly Login or Create an account" }.to_json
-    end
     
   end
 
   post "/reports" do
-    if logged_in?
-      report = Report.create(
+    report = Report.create(
       title:params[:title],
       location:params[:location],
       comment:params[:comment],
-      user_id:session[:user_id],
+      user_id:params[:user],
       type_id:params[:type_id]
-    )
+     )
     report.to_json
-    else
-      { errors: "Kindly Login or Create an account" }.to_json
-    end
   end
 
   patch "/reports/:id" do
-    if logged_in?
-      report = Report.find(params[:id])
-      report.update(
+    report = Report.find(params[:id])
+    report.update(
         location:params[:location],
         comment:params[:comment]
       )
-      report.to_json
-    else
-      { errors: "Kindly Login or Create an account" }.to_json
-    end
+    report.to_json
   end
 
   delete "/reports/:id" do
