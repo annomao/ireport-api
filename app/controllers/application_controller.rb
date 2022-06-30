@@ -23,7 +23,13 @@ class ApplicationController < Sinatra::Base
     user = User.find_by(email:params[:email])
   
     if user && user.authenticate(params[:password])
-      user.to_json
+      user_data = {
+        id: user.id
+        name: user.name
+        username: user.username
+        email: user.email
+      }
+      user_data.to_json
     else
       status 403
       { errors: "User does not exist" }.to_json
