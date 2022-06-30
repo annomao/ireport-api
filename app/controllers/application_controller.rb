@@ -69,7 +69,7 @@ class ApplicationController < Sinatra::Base
   end
 
   get "/user/reports/:id" do
-      reports = Report.all.where(["user_id= ?", params[:id]]).order(:updated_at)
+      reports = Report.all.where(["user_id= ?", params[:id]]).order(updated_at: :desc)
       updated_reports = reports.map do |report|
         {
           id: report.id,
