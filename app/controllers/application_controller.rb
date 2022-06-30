@@ -54,7 +54,17 @@ class ApplicationController < Sinatra::Base
 
   get "/user/reports/:id" do
       reports = Report.all.where(["user_id= ?", params[:id]]).order(:updated_at)
-      reports.to_json
+      updated_reports = reports.map do |report|
+        {
+          id: report.id,
+          title: report.title,
+          intervention: report.type.name,
+          location: report.location,
+          comment:report.comment,
+          status: report.status
+        }
+      end
+      updated_reports.to_json
     
   end
 
