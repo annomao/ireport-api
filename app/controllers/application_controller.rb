@@ -23,14 +23,12 @@ class ApplicationController < Sinatra::Base
     user = User.find_by(email:params[:email])
   
     if user && user.authenticate(params[:password])
-      user_data = user.map do |logged_user| 
-        {
-          id: logged_user.id,
-          name: logged_user.name,
-          username: logged_user.username,
-          email: logged_user.email
+      user_data = {
+          id: user.id,
+          name: user.name,
+          username: user.username,
+          email: user.email
         }
-      end
       user_data.to_json
     else
       status 403
