@@ -23,12 +23,14 @@ class ApplicationController < Sinatra::Base
     user = User.find_by(email:params[:email])
   
     if user && user.authenticate(params[:password])
-      user_data = {
-        id: user.id
-        name: user.name
-        username: user.username
-        email: user.email
-      }
+      user_data = user.map do |data| 
+        {
+          id: user.id,
+          name: user.name,
+          username: user.username,
+          email: user.email
+        }
+      end
       user_data.to_json
     else
       status 403
@@ -63,6 +65,7 @@ class ApplicationController < Sinatra::Base
       title:params[:title],
       location:params[:location],
       comment:params[:comment],
+      status: "Pending",
       user_id:params[:user],
       type_id:params[:type_id]
      )
